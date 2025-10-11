@@ -1,9 +1,15 @@
-import React, { forwardRef, useCallback, useMemo, useRef } from "react";
-import { FlatList, I18nManager, Platform, View } from "react-native";
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
+import { FlatList, I18nManager, Platform } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
-import { getWeeksInMonth, startOfMonthForDateString } from "../utils/date";
-import { height, width } from "../utils/screen";
+import { startOfMonthForDateString } from "../utils/date";
+import { width } from "../utils/screen";
 
 import { Calendar } from "./Calendar";
 import { VIEWABILITY_CONFIG } from "./constants";
@@ -12,15 +18,11 @@ import {
   CalendarListViewProps,
   FullCalendarListViewProps,
 } from "./types";
+import { useInteraction } from "./useInteraction";
 
 export const FullCalendarListView = forwardRef(
   (
     {
-      estimatedCalendarSize: {
-        fiveWeekCalendarSize,
-        monthTitleSize = 30,
-        weekDayNamesSize = 40,
-      },
       CalendarSeparator,
       calendarVerticalGap = 32,
       minDate,
@@ -35,7 +37,7 @@ export const FullCalendarListView = forwardRef(
       weekdaysShort,
       firstDayOfWeek,
       calendarContentContainerStyle,
-      calendarSize,
+      calendarWidth = width,
       showScrollIndicator,
       onScroll,
       showMonthName = true,
@@ -50,37 +52,30 @@ export const FullCalendarListView = forwardRef(
       FullCalendarListViewProps & {
         months: string[];
       },
-    ref: any,
+    ref: any
   ) => {
-    const calendarWidth = calendarSize?.width ?? width;
-    const calendarHeight = calendarSize?.height ?? height;
     const isWeb = Platform.select({ web: true, default: false });
+    const listRef = useRef<any>(null);
     const webFallbackContainerStyle: any = {
       scrollSnapAlign: horizontal ? "center" : "start",
       width: isWeb && calendarWidth === width ? "100vw" : calendarWidth,
     };
     const initialDateRef = useRef(currentDate);
+    const { interactionHandler, interactionRef } = useInteraction();
+
     const initialMonthIndex = useMemo(() => {
       if (initialDateRef.current) {
         const indexOfInitialMonth = months.indexOf(
-          startOfMonthForDateString(initialDateRef.current),
+          startOfMonthForDateString(initialDateRef.current)
         );
         return indexOfInitialMonth >= 0 ? indexOfInitialMonth : 0;
       }
       return 0;
     }, [months]);
 
-    const renderSeparator = useCallback(
-      () =>
-        CalendarSeparator ? (
-          <CalendarSeparator />
-        ) : (
-          <View style={{ height: calendarVerticalGap }} />
-        ),
-      [CalendarSeparator, calendarVerticalGap],
-    );
     const onViewableItemsChanged = useCallback(
       ({ viewableItems }: any) => {
+        if (!interactionRef.current) return;
         const visibleMonths = viewableItems
           //@ts-expect-error month is any
           .filter((month) => month.isViewable)
@@ -91,43 +86,16 @@ export const FullCalendarListView = forwardRef(
           onScroll?.(visibleMonths);
         }
       },
-      [onScroll],
+      [onScroll]
     );
 
-    const overrideLayout = useCallback(
-      (layout: any, item: string) => {
-        if (horizontal) {
-          layout.size = calendarWidth;
-          return;
-        }
-        const weeksInMonth = getWeeksInMonth(item, firstDayOfWeek);
-        const size = fiveWeekCalendarSize + calendarVerticalGap;
-        if (weeksInMonth > 5) {
-          const _monthTitleSize = showMonthName ? monthTitleSize : 0;
-          const _weekDayNamesSize =
-            showDayNames && !showDayNamesOnTop ? weekDayNamesSize : 0;
-          const heightPerWeek =
-            (fiveWeekCalendarSize - _weekDayNamesSize - _monthTitleSize) / 5;
-          layout.size = size + heightPerWeek;
-        } else {
-          layout.size = size;
-        }
-      },
-      [
-        horizontal,
-        calendarWidth,
-        firstDayOfWeek,
-        showMonthName,
-        showDayNames,
-        monthTitleSize,
-        showDayNamesOnTop,
-        calendarVerticalGap,
-        weekDayNamesSize,
-        fiveWeekCalendarSize,
-      ],
-    );
-
-    const renderCalendar = ({ item }: { item: string }) => (
+    const renderCalendar = ({
+      item,
+      index,
+    }: {
+      item: string;
+      index: number;
+    }) => (
       <Calendar
         {...calendarProps}
         showMonthName={showMonthName}
@@ -141,11 +109,31 @@ export const FullCalendarListView = forwardRef(
         contentContainerStyle={{
           ...calendarContentContainerStyle,
           ...webFallbackContainerStyle,
+          paddingTop: index !== 0 ? calendarVerticalGap : 0,
         }}
       />
     );
     const keyExtractor = useCallback((item: string) => item, []);
 
+    useImperativeHandle(ref, () => ({
+      scrollToItem({
+        item: dateString,
+        animated = true,
+      }: {
+        item: string;
+        animated?: boolean;
+      }) {
+        const month = startOfMonthForDateString(dateString);
+        const item = months.find((m) => m === month);
+        if (item) {
+          listRef.current?.scrollToItem({
+            animated,
+            item,
+          });
+          interactionRef.current = true;
+        }
+      },
+    }));
     return (
       <>
         {/*/!***/}
@@ -157,8 +145,7 @@ export const FullCalendarListView = forwardRef(
           <FlatList
             data={months}
             renderItem={renderCalendar}
-            ref={ref}
-            ItemSeparatorComponent={renderSeparator}
+            ref={listRef}
             keyExtractor={keyExtractor}
             extraData={calendarProps}
             horizontal
@@ -179,36 +166,28 @@ export const FullCalendarListView = forwardRef(
           />
         ) : (
           <FlashList
-            ref={ref}
+            ref={listRef}
             horizontal={horizontal}
-            ItemSeparatorComponent={renderSeparator}
             renderItem={renderCalendar}
             keyExtractor={keyExtractor}
             data={months}
-            estimatedItemSize={
-              horizontal ? calendarWidth : fiveWeekCalendarSize
-            }
-            estimatedListSize={{
-              width: calendarWidth,
-              height: calendarHeight,
-            }}
             extraData={calendarProps}
             pagingEnabled={horizontal}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={showScrollIndicator}
             onViewableItemsChanged={onViewableItemsChanged}
             initialScrollIndex={initialMonthIndex}
-            overrideItemLayout={overrideLayout}
             contentContainerStyle={calendarListContentContainerStyle}
             decelerationRate={decelerationRate}
             onEndReached={onListEndReached}
             onEndReachedThreshold={onEndReachedThreshold}
             viewabilityConfig={VIEWABILITY_CONFIG}
+            onScrollBeginDrag={interactionHandler}
           />
         )}
       </>
     );
-  },
+  }
 );
 
 FullCalendarListView.displayName = "FullCalendarListView";

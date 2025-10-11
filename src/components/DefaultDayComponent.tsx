@@ -28,19 +28,17 @@ export const DefaultDayComponent: React.FC<
   }, [state, isSelected, isToday]);
 
   return (
-    <>
-      <View style={[containerStyles.defaultContainer, dayStyle.containerStyle]}>
-        <Text
-          style={[
-            textStyles.defaultDayText,
-            textStyles[state],
-            dayStyle.textStyle,
-          ]}
-        >
-          {day.toLocaleDateString(locale, { day: "numeric" })}
-        </Text>
-      </View>
-    </>
+    <View style={[containerStyles.defaultContainer, dayStyle.containerStyle]}>
+      <Text
+        style={[
+          textStyles.defaultDayText,
+          textStyles[state],
+          dayStyle.textStyle,
+        ]}
+      >
+        {day.toLocaleDateString(locale, { day: "numeric" })}
+      </Text>
+    </View>
   );
 };
 

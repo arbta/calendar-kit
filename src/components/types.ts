@@ -15,10 +15,7 @@ export interface CalendarListProps
 }
 
 export type CalendarListViewProps = {
-  calendarSize?: {
-    width?: number;
-    height?: number;
-  };
+  calendarWidth?: number;
   showScrollIndicator?: boolean;
   decelerationRate?: "normal" | "fast" | number;
   onListEndReached?: () => void;
@@ -27,19 +24,15 @@ export type CalendarListViewProps = {
    * passes array of visible month dateStrings when viewAs=month
    * and passes month date object week dateString array when viewAs=week
    * @param visibleDates
+   * @param fromInteraction
    */
   onScroll?: (
-    visibleDates: { month: Date; week: string[] }[] | string[],
+    visibleDates: { month: Date; week: string[] }[] | string[], fromInteraction?: boolean
   ) => void;
   calendarListContentContainerStyle?: ViewStyle;
 };
 
 export interface FullCalendarListViewProps {
-  estimatedCalendarSize: {
-    fiveWeekCalendarSize: number;
-    monthTitleSize?: number;
-    weekDayNamesSize?: number;
-  };
   calendarVerticalGap?: number;
   CalendarSeparator?: React.ComponentType;
   showDayNamesOnTop?: boolean;

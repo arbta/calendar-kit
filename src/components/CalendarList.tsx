@@ -59,13 +59,13 @@ export const CalendarList = React.memo(
         });
       }, [minDate, pastMonthsCount, futureMonthsCount]);
 
-      const [activeMonth, setActiveMonth] = useState<string | undefined>(
+      const [activeDate, setActiveDate] = useState<string | undefined>(
         currentDate,
       );
 
       const renderMonthName = () => {
-        if (showMonthName && activeMonth && isWeeklyView) {
-          const month = dateStringToDate(activeMonth);
+        if (showMonthName && activeDate && isWeeklyView) {
+          const month = dateStringToDate(activeDate);
           return MonthNameComponent ? (
             <MonthNameComponent month={month} locale={calendarProps.locale} />
           ) : (
@@ -93,7 +93,6 @@ export const CalendarList = React.memo(
       const handleOnScroll = useCallback(
         (visibleDates: any) => {
           onScroll?.(visibleDates);
-
           let month: string | undefined;
           if (isWeeklyView) {
             const { week } = visibleDates[0];
@@ -102,7 +101,7 @@ export const CalendarList = React.memo(
             month = visibleDates[0];
           }
           if (month) {
-            setActiveMonth(month);
+            setActiveDate(month);
           }
         },
         [onScroll, isWeeklyView],
@@ -110,15 +109,15 @@ export const CalendarList = React.memo(
 
       useEffect(() => {
         if (markedDates) {
-          setActiveMonth(markedDates.at(0));
+          setActiveDate(markedDates.at(0));
         }
       }, [markedDates]);
 
       useEffect(() => {
-        if (activeMonth && onActiveMonthChange) {
-          onActiveMonthChange(activeMonth);
+        if (activeDate && onActiveMonthChange) {
+          onActiveMonthChange(activeDate);
         }
-      }, [activeMonth, onActiveMonthChange]);
+      }, [activeDate, onActiveMonthChange]);
 
       useImperativeHandle(ref, () => ({
         scrollToDate(dateString: string, animated: boolean = true) {
@@ -143,7 +142,7 @@ export const CalendarList = React.memo(
                 showExtraDays
                 months={months}
                 minDate={minDate}
-                currentDate={activeMonth}
+                currentDate={activeDate}
                 onScroll={handleOnScroll}
               />
             </WeekAnimatedTransitionComponent>
@@ -158,7 +157,7 @@ export const CalendarList = React.memo(
                 ref={listRef}
                 months={months}
                 minDate={minDate}
-                currentDate={activeMonth}
+                currentDate={activeDate}
                 onScroll={handleOnScroll}
               />
             </MonthAnimatedTransitionComponent>

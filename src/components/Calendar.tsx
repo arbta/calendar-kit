@@ -27,7 +27,7 @@ export interface CalendarProps
   viewAs?: "week" | "month";
   contentContainerStyle?: ViewStyle & {
     scrollSnapAlign?: "center" | "start";
-    width?: DimensionValue | string;
+    width?: DimensionValue | `${number}px`;
   };
 }
 

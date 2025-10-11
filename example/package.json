@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
-    "@expo/vector-icons": "^14.0.0",
+    "@expo/vector-icons": "^14.1.0",
     "date-fns": "^3.6.0",
     "expo": "^52.0.18",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.5",
+    "react-native": "0.76.9",
     "react-native-reanimated": "~3.16.1",
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.10"

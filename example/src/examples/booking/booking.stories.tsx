@@ -41,10 +41,6 @@ const BookingCalendarListComponent = ({ locale }) => {
       DayComponent={renderDayComponent}
       minDate={todayDateString}
       currentDate={dateRangeStart}
-      estimatedCalendarSize={{
-        fiveWeekCalendarSize: 302,
-        monthTitleSize: 30,
-      }}
       showExtraDays={false}
       markedDates={markedDates}
       futureMonthsCount={15}

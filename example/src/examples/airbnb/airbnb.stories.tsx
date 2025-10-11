@@ -39,10 +39,6 @@ const AirbnbCalendarListComponent = ({ locale }) => {
       minDate={todayDateString}
       currentDate={dateRangeStart}
       weekdaysFormat="narrow"
-      estimatedCalendarSize={{
-        fiveWeekCalendarSize: 267.3,
-        monthTitleSize: 31.7,
-      }}
       showExtraDays={false}
       markedDates={markedDates}
       futureMonthsCount={24}

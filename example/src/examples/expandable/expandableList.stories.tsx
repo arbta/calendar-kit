@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeInUp,
@@ -65,12 +65,6 @@ const ExpandableCalendarView = ({ locale, horizontal }) => {
           MonthAnimatedTransitionComponent={MonthTransitionComponent}
           WeekAnimatedTransitionComponent={WeekTransitionComponent}
           viewAs={viewAs}
-          estimatedCalendarSize={{
-            fiveWeekCalendarSize: Platform.select({
-              android: 251.4,
-              default: 248.7,
-            }),
-          }}
           horizontal={horizontal}
           firstDayOfWeek={1}
           minDate={todayDateString}

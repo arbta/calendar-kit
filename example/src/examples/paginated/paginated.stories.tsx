@@ -39,9 +39,6 @@ const PaginatedCalendarListComponent = ({ locale }) => {
       <CalendarList
         minDate={todayDateString}
         maxDate={maxDate}
-        estimatedCalendarSize={{
-          fiveWeekCalendarSize: 279,
-        }}
         showExtraDays={false}
         markedDates={markedDates}
         futureMonthsCount={futureMonths}
