@@ -1,14 +1,14 @@
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { InnerDayProps } from "@fowusu/calendar-kit";
+
 import { DataType } from "./data.mock";
 
-
 export const DayComponent: React.FC<
-  InnerDayProps<InnerDayProps<Pick<DataType, 'availability'>>>
+  InnerDayProps<InnerDayProps<Pick<DataType, "availability">>>
 > = ({ day, locale = "en-US", state, isToday, isSelected, availability }) => {
   const dayStyle = useMemo(() => {
-    if (state !== "inactive" || availability?.status !== 'unavailable') {
+    if (state !== "inactive" || availability?.status !== "unavailable") {
       if (isSelected) {
         return {
           textStyle: textStyles.selected,
@@ -24,8 +24,7 @@ export const DayComponent: React.FC<
     return {};
   }, [state, isSelected, isToday]);
 
-  const isAvailable = availability && availability?.status !== 'unavailable'
-
+  const isAvailable = availability && availability?.status !== "unavailable";
 
   return (
     <>
@@ -34,13 +33,22 @@ export const DayComponent: React.FC<
           style={[
             textStyles.defaultDayText,
             textStyles[state],
-              textStyles[availability?.status],
+            textStyles[availability?.status],
             dayStyle.textStyle,
           ]}
         >
           {day.toLocaleDateString(locale, { day: "numeric" })}
         </Text>
-        {isAvailable && <View style={[containerStyles.dotStyle, availability.status === 'available' ? containerStyles.dotAvailable :  containerStyles.dotPartiallyAvailable]}/>}
+        {isAvailable && (
+          <View
+            style={[
+              containerStyles.dotStyle,
+              availability.status === "available"
+                ? containerStyles.dotAvailable
+                : containerStyles.dotPartiallyAvailable,
+            ]}
+          />
+        )}
       </View>
     </>
   );
@@ -52,7 +60,7 @@ const containerStyles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 12,
     gap: 2,
-    alignItems: 'center'
+    alignItems: "center",
   },
   selected: {
     backgroundColor: "#b1b5ff",
@@ -63,12 +71,12 @@ const containerStyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#cacaca",
   },
-  dotPartiallyAvailable:{
+  dotPartiallyAvailable: {
     backgroundColor: "#ffcd50",
   },
-  dotAvailable:{
+  dotAvailable: {
     backgroundColor: "#458c4f",
-  }
+  },
 });
 
 const textStyles = StyleSheet.create({
@@ -88,10 +96,10 @@ const textStyles = StyleSheet.create({
   },
   unavailable: {
     color: "#cacaca",
-    textDecorationLine: 'line-through'
+    textDecorationLine: "line-through",
   },
   today: {
     color: "#787de7",
     fontWeight: "bold",
-  }
+  },
 });
