@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@latest
         with:
           token: ${{ secrets.GIT_USER_TOKEN }}
 
@@ -43,7 +43,7 @@ jobs:
           git config --global user.name "${{ secrets.GIT_OWNER_NAME }}"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@latest
 
       - name: Install dependencies
         run: yarn
