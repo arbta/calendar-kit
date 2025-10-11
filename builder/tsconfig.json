@@ -3,7 +3,8 @@
   "include": ["../src/**/*"],
   "compilerOptions": {
     "composite": false,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "target": "ESNext"
   },
   "exclude": [
     "../node_modules", "../dist/**/*.{ts,mts}"],

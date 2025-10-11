@@ -20,7 +20,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.6",
     "@babel/preset-env": "^7.24.6",
-    "@shopify/flash-list": "latest",
+    "@shopify/flash-list": "^2.1.0",
     "@tsconfig/recommended": "^1.0.6",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.5",

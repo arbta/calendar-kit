@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": false,
     "jsx": "react-jsx",
+    "target": "esNext"
   },
   "exclude": [
     "node_modules", "dist/**/*.{ts,mts}"],

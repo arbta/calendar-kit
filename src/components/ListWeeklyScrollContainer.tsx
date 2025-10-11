@@ -26,6 +26,7 @@ import { width } from "../utils/screen";
 import { VIEWABILITY_CONFIG } from "./constants";
 import { CalendarListViewProps } from "./types";
 import { Week, WeekProps } from "./Week";
+import { useInteraction } from "./useInteraction";
 
 export interface ListWeeklyScrollContainerProps
   extends CalendarListViewProps,
@@ -56,10 +57,13 @@ export const ListWeeklyScrollContainer = forwardRef(
       calendarListContentContainerStyle,
       ...weekProps
     }: ListWeeklyScrollContainerProps,
-    ref: any,
+    ref: any
   ) => {
     const [scrollLayoutWidth, setScrollLayoutWidth] = useState(width);
+
     const listRef = useRef<any>(null);
+    const initialDateRef = useRef(currentDate);
+    const { interactionRef, interactionHandler } = useInteraction();
 
     const data = useMemo(() => {
       const lastMonth = endOfMonth(dateStringToDate(months[months.length - 1]));
@@ -68,15 +72,14 @@ export const ListWeeklyScrollContainer = forwardRef(
         (week) => ({
           month: startOfMonth(dateStringToDate(week[0])),
           week,
-        }),
+        })
       );
     }, [months, firstDayOfWeek]);
 
-    const initialDateRef = useRef(currentDate);
     const initialMonthIndex = useMemo(() => {
       if (initialDateRef.current) {
         const indexOfInitialMonth = data.findIndex(({ week }) =>
-          week.includes(initialDateRef.current as string),
+          week.includes(initialDateRef.current as string)
         );
         return indexOfInitialMonth >= 0 ? indexOfInitialMonth : 0;
       }
@@ -109,7 +112,13 @@ export const ListWeeklyScrollContainer = forwardRef(
     };
 
     useImperativeHandle(ref, () => ({
-      scrollToItem(dateString: string, animated: boolean = true) {
+      scrollToItem({
+        item: dateString,
+        animated = true,
+      }: {
+        item: string;
+        animated: boolean;
+      }) {
         const item = data.find(({ week }) => week.includes(dateString));
         if (item) {
           listRef.current?.scrollToItem({
@@ -122,6 +131,7 @@ export const ListWeeklyScrollContainer = forwardRef(
 
     const onViewableItemsChanged = useCallback(
       ({ viewableItems }: any) => {
+        if (!interactionRef.current) return;
         const visibleWeeks = viewableItems
           //@ts-expect-error month is any
           .filter((week) => week.isViewable)
@@ -132,7 +142,7 @@ export const ListWeeklyScrollContainer = forwardRef(
           onScroll?.(visibleWeeks);
         }
       },
-      [onScroll],
+      [onScroll]
     );
     return I18nManager.isRTL ? (
       <FlatList
@@ -167,7 +177,6 @@ export const ListWeeklyScrollContainer = forwardRef(
         renderItem={renderItem}
         pagingEnabled
         snapToInterval={scrollLayoutWidth}
-        estimatedItemSize={scrollLayoutWidth}
         initialScrollIndex={initialMonthIndex}
         onEndReachedThreshold={onEndReachedThreshold}
         onEndReached={onListEndReached}
@@ -176,9 +185,10 @@ export const ListWeeklyScrollContainer = forwardRef(
         extraData={weekProps}
         contentContainerStyle={calendarListContentContainerStyle}
         viewabilityConfig={VIEWABILITY_CONFIG}
+        onScrollBeginDrag={interactionHandler}
       />
     );
-  },
+  }
 );
 
 ListWeeklyScrollContainer.displayName = "ListWeeklyScrollContainer";

@@ -19,10 +19,10 @@ export interface WeekProps
   customStateCreator?: (
     stateInputParams: StateInputParams,
     defaultState: DayState,
-  ) => Record<string,unknown>;
+  ) => Record<string, unknown>;
   weekContainerStyle?: ViewStyle & {
     scrollSnapAlign?: "center" | "start";
-    width?: DimensionValue | string;
+    width?: DimensionValue | `${number}px`;
   };
 }
 
